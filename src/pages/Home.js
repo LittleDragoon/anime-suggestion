@@ -5,23 +5,29 @@ export const Home = () => {
   const [searchForAnime, setSearchForAnime] = React.useState("");
   const [resultAnimeSuggestion, setResultAnimeSuggestion] =
     React.useState(null);
+  const [getSuggestionButton, setGetSuggestionButton] =
+    React.useState("Get Suggestions");
 
   const fetchAnimeSuggestions = async () => {
+    setGetSuggestionButton("Getting Suggestions...");
     const { data } = await axios.get(
       "https://anime-recommender.p.rapidapi.com/",
       {
-        params: { anime_title: searchForAnime, number_of_anime: "1" },
+        params: { anime_title: searchForAnime, number_of_anime: "20" },
         headers: {
           "x-rapidapi-host": "anime-recommender.p.rapidapi.com",
           "x-rapidapi-key": process.env.REACT_APP_PUBLIC_RAPIDAPI_KEY,
         },
       }
     );
-    setResultAnimeSuggestion(data);
+    setGetSuggestionButton("Get Suggestions");
+    if (data.data !== "Anime Not Found") {
+      setResultAnimeSuggestion(data.data);
+    }
   };
 
   return (
-    <div className="flex flex-col justify-center items-center bg-slate-900 text-white gap-y-12 min-h-screen">
+    <div className="flex flex-col items-center bg-slate-900 text-white gap-y-12 min-h-screen">
       <div className="flex flex-col items-center pt-12 gap-y-4">
         <div className="text-6xl font-bold">
           Anime <span className="text-purple-600">Suggestion</span>
@@ -37,7 +43,7 @@ export const Home = () => {
           type="text"
           id="anime-input"
           name="anime-input"
-          placeholder="Enter an anime for suggestion"
+          placeholder="Enter an anime for suggestion: e.g. 'Death Note'"
           onChange={(e) => setSearchForAnime(e.target.value)}
         />
         <button
@@ -46,25 +52,50 @@ export const Home = () => {
           name="get-anime"
           onClick={fetchAnimeSuggestions}
         >
-          <b>Get suggestions</b>
+          <b>{getSuggestionButton}</b>
         </button>
       </div>
-      {resultAnimeSuggestion && (
-        <div className="flex flex-1 flex-col border-orange-500 border-2 p-4 gap-y-2 w-2/5">
-          <img
-            src={resultAnimeSuggestion.data[0].bannerImage}
-            alt="anime Suggestion"
-            width={600}
-            height={200}
-          />
-          <div className="font-bold font-3xl text-purple-600">
-            {resultAnimeSuggestion.data[0].title.english}
-          </div>
-          <div className="text-justify">
-            {resultAnimeSuggestion.data[0].description}
-          </div>
-        </div>
-      )}
+      {resultAnimeSuggestion &&
+        resultAnimeSuggestion.map((suggestion) => {
+          const html = /<\/?([a-z][a-z0-9]*)\b[^>]*>?/gi;
+          const doubleSpace = /\s{2,}/g;
+          const description = suggestion.description
+            .replace(html, "")
+            .replace(doubleSpace, " ")
+            .trim();
+          return (
+            <div
+              className="flex flex-col item-center my-12 w-3/6 h-4/5 md:flex-col md:w-4/6 md:h-full md:mb-12"
+              key={suggestion.id}
+            >
+              <div className="w-full mt-4 p-8 border border-secondary h-full text-lightGrey font-raleway">
+                <img
+                  src={suggestion.bannerImage}
+                  alt="anime suggestion"
+                  height={200}
+                  className="items-center justify-center"
+                />
+                <h2 className="text-xl font-bold my-4">
+                  {suggestion.title.english}
+                </h2>
+                <p className="text-sm leading-8">{description}</p>
+                {suggestion.trailer && (
+                  <div className="mt-4">
+                    <h3 className="text-lg my-4 font-bold">Watch Trailer</h3>
+                    <iframe
+                      className="w-full h-96"
+                      src={`https://www.youtube.com/embed/${suggestion.trailer.id}`}
+                      title="YouTube video player"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
     </div>
   );
 };
