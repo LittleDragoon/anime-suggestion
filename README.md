@@ -7,19 +7,22 @@ Here is an overview of the project :
 
 <img width="504" alt="Screenshot 2023-07-31 at 14 21 14" src="https://github.com/LittleDragoon/anime-suggestion/assets/85112881/7f60cbc9-48f3-4d75-a83b-18f0acf4686b">
 
-
 ## Further Description
 
-To run the project, you need to clone this project, then "npm i".
+The project is coded in React and Tailwind CSS.
 
-Then, you have to create a file .env.local at the root of your files where you write "REACT_APP_PUBLIC_RAPIDAPI_KEY = your_key"
+A few concepts covered
 
-This key can be found if you subscribe to the Anime Recommender API (link above).
+- Fetching data using axios + loading state logic
+- Routing
+- Regex
+- Iframe
 
 ## Run the Project : `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+To run the project, you need to "clone this project", then "npm i".
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Then, you have to create a file .env.local at the root of your files where you write "REACT_APP_PUBLIC_RAPIDAPI_KEY = your_key". This key can be found if you subscribe to the Anime Recommender API (link above).
+
+Use `npm start`to run the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
