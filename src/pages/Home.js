@@ -5,22 +5,24 @@ export const Home = () => {
   const [searchForAnime, setSearchForAnime] = React.useState("");
   const [resultAnimeSuggestion, setResultAnimeSuggestion] =
     React.useState(null);
-  const [getSuggestionButton, setGetSuggestionButton] =
-    React.useState("Get Suggestions");
+
+  const [isDataFetching, setIsDataFetching] = React.useState(false);
+
+  // /!\ In an async func, the page is rendered at every set state
 
   const fetchAnimeSuggestions = async () => {
-    setGetSuggestionButton("Getting Suggestions...");
+    setIsDataFetching(true);
     const { data } = await axios.get(
       "https://anime-recommender.p.rapidapi.com/",
       {
-        params: { anime_title: searchForAnime, number_of_anime: "20" },
+        params: { anime_title: searchForAnime, number_of_anime: "5" },
         headers: {
           "x-rapidapi-host": "anime-recommender.p.rapidapi.com",
           "x-rapidapi-key": process.env.REACT_APP_PUBLIC_RAPIDAPI_KEY,
         },
       }
     );
-    setGetSuggestionButton("Get Suggestions");
+    setIsDataFetching(false);
     if (data.data !== "Anime Not Found") {
       setResultAnimeSuggestion(data.data);
     }
@@ -52,10 +54,14 @@ export const Home = () => {
           name="get-anime"
           onClick={fetchAnimeSuggestions}
         >
-          <b>{getSuggestionButton}</b>
+          <b>
+            {isDataFetching ? "Getting Suggestions ..." : "Get Suggestions"}
+          </b>
         </button>
       </div>
-      {resultAnimeSuggestion &&
+      {isDataFetching && <div>Loading... Wait a few seconds... </div>}
+      {!isDataFetching &&
+        resultAnimeSuggestion &&
         resultAnimeSuggestion.map((suggestion) => {
           const html = /<\/?([a-z][a-z0-9]*)\b[^>]*>?/gi;
           const doubleSpace = /\s{2,}/g;
