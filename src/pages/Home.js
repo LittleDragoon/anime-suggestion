@@ -23,9 +23,7 @@ export const Home = () => {
       }
     );
     setIsDataFetching(false);
-    if (data.data !== "Anime Not Found") {
-      setResultAnimeSuggestion(data.data);
-    }
+    setResultAnimeSuggestion(data.data);
   };
 
   return (
@@ -60,48 +58,52 @@ export const Home = () => {
         </button>
       </div>
       {isDataFetching && <div>Loading... Wait a few seconds... </div>}
-      {!isDataFetching &&
-        resultAnimeSuggestion &&
-        resultAnimeSuggestion.map((suggestion) => {
-          const html = /<\/?([a-z][a-z0-9]*)\b[^>]*>?/gi;
-          const doubleSpace = /\s{2,}/g;
-          const description = suggestion.description
-            .replace(html, "")
-            .replace(doubleSpace, " ")
-            .trim();
-          return (
-            <div
-              className="flex flex-col item-center my-12 w-3/6 h-4/5 md:flex-col md:w-4/6 md:h-full md:mb-12"
-              key={suggestion.id}
-            >
-              <div className="w-full mt-4 p-8 border border-secondary h-full text-lightGrey font-raleway">
-                <img
-                  src={suggestion.bannerImage}
-                  alt="anime suggestion"
-                  height={200}
-                  className="items-center justify-center"
-                />
-                <h2 className="text-xl font-bold my-4">
-                  {suggestion.title.english}
-                </h2>
-                <p className="text-sm leading-8">{description}</p>
-                {suggestion.trailer && (
-                  <div className="mt-4">
-                    <h3 className="text-lg my-4 font-bold">Watch Trailer</h3>
-                    <iframe
-                      className="w-full h-96"
-                      src={`https://www.youtube.com/embed/${suggestion.trailer.id}`}
-                      title="YouTube video player"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                )}
+      {!isDataFetching && resultAnimeSuggestion ? (
+        resultAnimeSuggestion !== "Anime Not Found" ? (
+          resultAnimeSuggestion.map((suggestion) => {
+            const html = /<\/?([a-z][a-z0-9]*)\b[^>]*>?/gi;
+            const doubleSpace = /\s{2,}/g;
+            const description = suggestion.description
+              .replace(html, "")
+              .replace(doubleSpace, " ")
+              .trim();
+            return (
+              <div
+                className="flex flex-col item-center my-12 w-3/6 h-4/5 md:flex-col md:w-4/6 md:h-full md:mb-12"
+                key={suggestion.id}
+              >
+                <div className="w-full mt-4 p-8 border border-secondary h-full text-lightGrey font-raleway">
+                  <img
+                    src={suggestion.bannerImage}
+                    alt="anime suggestion"
+                    height={200}
+                    className="items-center justify-center"
+                  />
+                  <h2 className="text-xl font-bold my-4">
+                    {suggestion.title.english}
+                  </h2>
+                  <p className="text-sm leading-8">{description}</p>
+                  {suggestion.trailer && (
+                    <div className="mt-4">
+                      <h3 className="text-lg my-4 font-bold">Watch Trailer</h3>
+                      <iframe
+                        className="w-full h-96"
+                        src={`https://www.youtube.com/embed/${suggestion.trailer.id}`}
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <div>Anime not found</div>
+        )
+      ) : null}
     </div>
   );
 };
